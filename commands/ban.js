@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
 require('discord-inline-reply');
 exports.run = function(client, message, args) {
-  if(!message.member.hasPermission("BAN_MEMBERS")) return message.channel.send('You can\'t use that!')
-        if(!message.guild.me.hasPermission("BAN_MEMBERS")) return message.channel.send('I don\'t have the right permissions.')
+  if(!message.member.hasPermission("BAN_MEMBERS")) return message.lineReply('You need `BAN_MEMBERS` permission to use that command.')
+        if(!message.guild.me.hasPermission("BAN_MEMBERS")) return message.lineReply('I need `BAN_MEMBERS` permission to execute this command.')
 
         const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
 
@@ -15,10 +15,10 @@ exports.run = function(client, message, args) {
 
         let reason = args.slice(1).join(" ");
 
-        if(!reason) return message.channel.send('Please specify a reason');
+        if(!reason) return message.channel.send('Please specify a reason.');
 
         member.ban({ days: 7, reason: `${reason}` }).catch(err => { 
-          message.channel.send('Something went wrong')
+          message.channel.send('Something went wrong!')
             console.log(err)
         })
 
@@ -29,7 +29,7 @@ exports.run = function(client, message, args) {
         .addField('Reason', reason)
         .setFooter(`Banned by: ${message.author}`)
         .setTimestamp()
-        .setColor("RANDOM")
+        .setColor("GREEN")
 
         message.channel.send(embed);
 
@@ -50,7 +50,7 @@ exports.conf = {
   enabled: true,
   guildOnly: false,
   aliases: [],
-  permLevel: 0
+  permLevel: 5
 };
 
 exports.help = {
