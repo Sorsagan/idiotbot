@@ -1,18 +1,18 @@
 const Discord = require('discord.js');
 require('discord-inline-reply');
 exports.run = function(client, message, args) {
-  if (!message.member.hasPermission('KICK_MEMBERS')) return message.lineReply('You need `KICK_MEMBERS` permission to use that.')
-  if(!message.guild.me.hasPermission("KICK_MEMBERS")) return message.lineReply('I need `KICK_MEMBERS` permission to execute this command.')
+  if (!message.member.hasPermission('KICK_MEMBERS')) return message.lineReply('<:danger:888763177909772319> You need `KICK_MEMBERS` permission to use that.')
+  if(!message.guild.me.hasPermission("KICK_MEMBERS")) return message.lineReply('<:danger:888763177909772319> I need `KICK_MEMBERS` permission to execute this command.')
   
   let member = message.mentions.members.first()
-  if (!member) return message.reply('Please specify a member for me to kick them.')
+  if (!member) return message.reply('<:danger:888763177909772319> Please specify a member for me to kick them.')
   let reason = args.slice(1).join(" ");
-  if (!reason) return message.channel.send('Please specify a reason.');
-  if (!member.kickable) return message.reply('This member is not kickable.')
+  if (!reason) return message.channel.send('<:danger:888763177909772319> Please specify a reason.');
+  if (!member.kickable) return message.reply('<:error:888763120019972126> This member is not kickable.')
   
   member.kick(reason).catch(err => console.log(err));
   const embed = new Discord.MessageEmbed()
-        .setTitle('Member Kicked')
+        .setTitle('<:succes:888763150097326090> Member Kicked')
         .setThumbnail(member.user.displayAvatarURL())
         .addField('User Kicked', member)
         .addField('Reason', reason)
