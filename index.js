@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
-
+const { addexp } = require("./xp.js")
 client.conf = {
   token: `${process.env.token}`,
   pref: "i!",
@@ -10,6 +10,15 @@ client.conf = {
 };
 
 client.on("message", message => {
+  if (message.content.includes("discord.gg/" || "discordapp.com/invite/")) {
+    message
+      .delete()
+      .then(
+        message.channel.send(
+          "Link Deleted:\n**Invite links are not permitted on this server**"
+        )
+      );
+  }
   let client = message.client;
   if (message.author.bot) return;
   if (!message.content.startsWith(client.conf.pref)) return;
@@ -25,6 +34,7 @@ client.on("message", message => {
   if (cmd) {
     if (perms < cmd.conf.permLevel) return;
     cmd.run(client, message, params, perms);
+    return addexp(message)
   }
 });
 

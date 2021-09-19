@@ -1,14 +1,16 @@
 ### Todo
 
-- [ ] Link Blocker
-- [ ] Level System
+- [ ] Economy System
 
 ### In Progress
 
-- [ ] Giveaway System
+- [ ] Fun Commands 
+- [ ] Help Command
 
 ### Done ✓
 
 - [x] Create my first TODO.md  
 - [x] Warning Command (w/ database)
 - [x] Mute Command
+- [x] Link Blocker
+- [x] Level System
