@@ -1,58 +1,49 @@
-const db = require('quick.db')
-const { getInfo } = require("../xp.js")
+const { MessageAttachment } = require("discord.js");
 const canvacord = require("canvacord");
-const Discord = require("discord.js");
 const background = [
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbffNMl_lDavVi5YWvzGYNUpiO2huKd_Aamg&usqp=CAU",
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZCtuvqAKiUxgkUoJ6WY9Rj5fVnA0kPzCTCw&usqp=CAU",
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUK9Qk_-xGwv-QZIXz2L-CZ1VIcJ-5yDkcuA&usqp=CAU",
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp0lmyo47lvtXIscNlOATWJdX4WAwYOJfAtA&usqp=CAU"
+  "https://i.ibb.co/gRQGnpG/1.png",
+  "https://i.ibb.co/DYLJ5GT/2.png",
+  "https://i.ibb.co/42kW0pL/3.png",
+  "https://i.ibb.co/WpF2kvC/4.png",
+  "https://i.ibb.co/6ZgxHVQ/5.png",
+  "https://i.ibb.co/tJzLZNn/6.png"
   ]
-  exports.run = function(client, message, args) {
-    const user = message.mentions.users.first() || message.author;
-    
-    if(user.id === client.user.id) { //IF BOT
-      return message.channel.send("😉 | I am on level 100.")
-    }
-    
-    if(user.bot) {
-      return message.channel.send("Bot do not have levels.")
-    }
-    
-    let xp = db.get(`xp_${user.id}_${message.guild.id}`) || 0;
-    
-    const {level, remxp, levelxp} = getInfo(xp);
-    
-const rank = new canvacord.Rank()
-    .setAvatar(user.displayAvatarURL({dynamic: false,  format: 'png'}))
-    .setCurrentXP(remxp)
-    .setRequiredXP(levelxp)
-    .setLevel(level)
-    .setStatus(user.presence.status)
-    .setProgressBar("#FFFFFF", "COLOR")
+ exports.run = async (client, message, args) => {
+  let user = message.mentions.users.first() || client.users.cache.get(args[0]) || message.author;
+
+  let level = client.db.get(`level_${user.id}`) || 0;
+  let cexp = client.db.get(`exp_${user.id}`) || 0;
+  let reqexp = Math.floor(Math.pow(level / 0.1, 2));
+
+  let everyone = client.db.all().filter(i => i.ID.startsWith("exp_")).sort((a, b) => b.data - a.data);
+  let rank = everyone.map(x => x.ID).indexOf(`exp_${user.id}`) + 1;
+
+
+  const card = new canvacord.Rank()          
     .setUsername(user.username)
     .setDiscriminator(user.discriminator)
-    .setRank(1, "a", false)
-    .setBackground("IMAGE", background[Math.floor(Math.random() * 4)],);
+    .setRank(rank)
+    .setLevel(level)
+    .setCurrentXP(cexp)
+    .setRequiredXP(reqexp)
+    .setStatus(user.presence.status)
+    .setAvatar(user.displayAvatarURL({ format: "png", size: 1024 }))
+   .setBackground("IMAGE", background[Math.floor(Math.random() * 4)],);
 
-rank.build()
-    .then(data => {
-        const attachment = new Discord.MessageAttachment(data, "level.png");
-        message.channel.send(attachment);
-    });   
-    
-    
-    
-    
-  }
+  const img = await card.build();
+  
+  return message.channel.send(new MessageAttachment(img, "level.png"));
+};
+
 exports.conf = {
+  aliases: [],
+  guildOnly: true,
   enabled: true,
-    guildOnly: true,
-      aliases: ["rank"],
-        permLevel: 0
-        };
-exports.help = {
-  name: 'level',
-    description: 'level',
-      usage: 'level'
-      };
+  permLevel: 0
+};
+
+module.exports.help = {
+  name: "level",
+  usage: "level",
+  description: "level"
+};

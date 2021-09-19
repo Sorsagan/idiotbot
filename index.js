@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
-const { addexp } = require("./xp.js")
+const db = require('quick.db')
 client.conf = {
   token: `${process.env.token}`,
   pref: "i!",
@@ -8,8 +8,28 @@ client.conf = {
   oynuyor: `im just an idiot`,
   durum: "dnd" // durumu
 };
-
-client.on("message", message => {
+client.cooldown = new Discord.Collection();
+client.config = {
+cooldown: 1 * 1000
+}
+client.db = require("quick.db");
+client.on("message", async (message) => {
+  let client = message.client;
+  if (!message.guild || message.author.bot) return;
+    exp(message);
+async function exp(message) {
+    if (!client.cooldown.has(`${message.author.id}`) || (Date.now() - client.cooldown.get(`${message.author.id}`) > client.config.cooldown)) {
+        let exp = client.db.add(`exp_${message.author.id}`, Math.floor(Math.random() * 4) + 1);
+        let level = Math.floor(0.3 * Math.sqrt(exp));
+        let lvl = client.db.get(`level_${message.author.id}`) || client.db.set(`level_${message.author.id}`,1);;
+        if (level > lvl) {
+            let newLevel = client.db.set(`level_${message.author.id}`,level);
+             let kanal = await client.db.fetch(`svlog_${message.guild.id}`)
+            kanal.send(`:tada: ${message.author.toString()}, leveled up! Your new level ${newLevel}!`);
+        }
+        client.cooldown.set(`${message.author.id}`, Date.now());
+    }
+}
   if (message.content.includes("discord.gg/" || "discordapp.com/invite/")) {
     message
       .delete()
@@ -19,7 +39,7 @@ client.on("message", message => {
         )
       );
   }
-  let client = message.client;
+
   if (message.author.bot) return;
   if (!message.content.startsWith(client.conf.pref)) return;
   let command = message.content.split(" ")[0].slice(client.conf.pref.length);
@@ -34,7 +54,6 @@ client.on("message", message => {
   if (cmd) {
     if (perms < cmd.conf.permLevel) return;
     cmd.run(client, message, params, perms);
-    return addexp(message)
   }
 });
 
@@ -56,7 +75,6 @@ client.on("ready", () => {
   console.log(`Oynuyor ayarlandı!`);
 });
 
-const db = require("quick.db");
 const chalk = require("chalk");
 const fs = require("fs");
 const moment = require("moment");
