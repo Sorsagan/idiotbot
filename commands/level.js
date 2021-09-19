@@ -48,11 +48,11 @@ rank.build()
 exports.conf = {
   enabled: true,
     guildOnly: true,
-      aliases: [],
+      aliases: ["rank"],
         permLevel: 0
         };
 exports.help = {
   name: 'level',
-    description: 'Botun pingini gĂ¶sterir.',
-      usage: 'ping'
+    description: 'level',
+      usage: 'level'
       };
