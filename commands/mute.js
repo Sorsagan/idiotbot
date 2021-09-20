@@ -1,11 +1,11 @@
 const Discord = require("discord.js");
 require("discord-inline-reply");
 const ms = require("ms");
-exports.run = function(client, message, args) {
+exports.run = async (client, message, args) => {
   let user =
     message.mentions.members.first() ||
     message.guild.members.cache.get(args[0]);
-  var role = user.guild.roles.cache.find(role => role.name == "Muted");
+  var role = message.guild.roles.cache.find(role => role.name == "Muted");
   let reason = args.slice(2).join(" ");
   if (!message.member.hasPermission("KICK_MEMBERS"))
     return message.lineReply(
@@ -16,16 +16,12 @@ exports.run = function(client, message, args) {
       "<:danger:888763177909772319> I need `KICK_MEMBERS` permission to execute this command."
     );
 
-  if (!reason)
-    return message.channel.send(
-      "<:danger:888763177909772319> Please specify a reason."
-    );
-
   if (!user) {
     return message.channel.send(
       "<:danger:888763177909772319> You need to mention the player you want to mute."
     );
   }
+  
   if (!args[1]) {
     return message.channel.send(
       "<:danger:888763177909772319> You need to specify how long to mute the use."
@@ -34,6 +30,11 @@ exports.run = function(client, message, args) {
   if (args[1].includes("-")) {
     return message.channel.send("<:error:888763120019972126> Nice try you idiot.");
   }
+if (!reason) {
+    return message.channel.send(
+      "<:danger:888763177909772319> Please specify a reason."
+    );
+}
   const embed = new Discord.MessageEmbed()
     .setTitle("<:succes:888763150097326090> Member Muted")
     .setThumbnail(user.user.displayAvatarURL())
