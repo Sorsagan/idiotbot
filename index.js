@@ -16,20 +16,28 @@ client.db = require("quick.db");
 client.on("message", async (message) => {
   let client = message.client;
   if (!message.guild || message.author.bot) return;
-    exp(message);
-async function exp(message) {
-    if (!client.cooldown.has(`${message.author.id}`) || (Date.now() - client.cooldown.get(`${message.author.id}`) > client.config.cooldown)) {
-        let exp = client.db.add(`exp_${message.author.id}`, Math.floor(Math.random() * 4) + 1);
-        let level = Math.floor(0.3 * Math.sqrt(exp));
-        let lvl = client.db.get(`level_${message.author.id}`) || client.db.set(`level_${message.author.id}`,1);;
-        if (level > lvl) {
-            let newLevel = client.db.set(`level_${message.author.id}`,level);
-             let kanal = await client.db.fetch(`svlog_${message.guild.id}`)
-            kanal.send(`:tada: ${message.author.toString()}, leveled up! Your new level ${newLevel}!`);
-        }
-        client.cooldown.set(`${message.author.id}`, Date.now());
+  const info = {
+    xp: db.get(`exp_${message.author.id}`) || 0,
+    level: db.get(`level_${message.author.id}`) || 1,
+    target: 5 * Math.pow(this.level, 2) + (50 * this.level) + 100,
+    channel: client.channels.cache.get(db.get(`svlog_${message.guild.id}`) || "-1"),
+    cooldown: client.cooldown.get(`${message.author.id}`) || 0
+  };
+  if (Date.now() - info.cooldown > client.config.cooldown) {
+    info.xp++;
+    if(info.xp >= info.target) {
+      info.xp-= info.target;
+      info.level++;
+      if(info.channel && info.channel.type === "text") {
+        try {
+          info.channel.send(`:tada: <@${message.author.id}>, leveled up! Your new level is ${info.level}!`);
+        } catch (e) {}
+      }
+      db.set(`level_${message.author.id}`, info.level);
     }
-}
+    db.set(`exp_${message.author.id}`, info.xp);
+    client.cooldown.set(`${message.author.id}`, Date.now());
+  }
   if (message.content.includes("discord.gg/" || "discordapp.com/invite/")) {
     message
       .delete()
