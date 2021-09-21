@@ -11,9 +11,9 @@ const background = [
  exports.run = async (client, message, args) => {
   let user = message.mentions.users.first() || client.users.cache.get(args[0]) || message.author;
 
-  let level = client.db.get(`level_${user.id}`) || 0;
+  let level = client.db.get(`level_${user.id}`) || 1;
   let cexp = client.db.get(`exp_${user.id}`) || 0;
-  let reqexp = Math.floor(Math.pow(level / 0.1, 2));
+  const target = 5 * Math.pow(level, 2) + (50 * level) + 100;
 
   let everyone = client.db.all().filter(i => i.ID.startsWith("exp_")).sort((a, b) => b.data - a.data);
   let rank = everyone.map(x => x.ID).indexOf(`exp_${user.id}`) + 1;
@@ -25,7 +25,7 @@ const background = [
     .setRank(rank)
     .setLevel(level)
     .setCurrentXP(cexp)
-    .setRequiredXP(reqexp)
+    .setRequiredXP(target-cexp)
     .setStatus(user.presence.status)
     .setAvatar(user.displayAvatarURL({ format: "png", size: 1024 }))
    .setBackground("IMAGE", background[Math.floor(Math.random() * 4)],);
