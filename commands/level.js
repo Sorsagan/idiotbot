@@ -25,7 +25,7 @@ const background = [
     .setRank(rank)
     .setLevel(level)
     .setCurrentXP(cexp)
-    .setRequiredXP(target-cexp)
+    .setRequiredXP(target)
     .setStatus(user.presence.status)
     .setAvatar(user.displayAvatarURL({ format: "png", size: 1024 }))
    .setBackground("IMAGE", background[Math.floor(Math.random() * 4)],);
