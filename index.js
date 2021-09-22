@@ -1,6 +1,17 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 const db = require('quick.db')
+const { GiveawaysManager } = require('discord-giveaways');
+const manager = new GiveawaysManager(client, {
+    storage: './giveaways.json',
+    default: {
+        botsCanWin: false,
+        embedColor: '#FF0000',
+        embedColorEnd: '#000000',
+        reaction: '🎉'
+    }
+});
+client.giveawaysManager = manager;
 client.conf = {
   token: `${process.env.token}`,
   pref: "i!",

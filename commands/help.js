@@ -17,7 +17,12 @@ exports.run = function(client, message, args) {
       },
       {
         name: "<:slashcommand:889585804379324437> Fun",
-        value: "anime, dog, cat, meme",
+        value: "anime, dog, cat, meme, clyde",
+        inline: true
+      },
+      {
+        name: "<:flyrocket:890230759036686366> Games",
+        value: "snake, guess, quiz",
         inline: true
       }
     )
